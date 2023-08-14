@@ -16,4 +16,6 @@ Commands:
 Resources:
 Contributors:
     - Name: Arris Huijgen
-      Handle: bitsadmin---
+      Handle: bitsadmin
+
+---
