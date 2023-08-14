@@ -1,0 +1,25 @@
+---
+cmdlets:
+  label: Cmdlets
+  description: |
+    PowerShell Cmdlets
+
+binaries:
+  label: Binaries
+  description: |
+    Binary files (.exe)
+
+mmc:
+  label: MMC
+  description: |
+    Microsoft Management Console (.msc) applets
+
+scripts:
+  label: Scripts
+  description: |
+    VBS scripts
+
+wmi:
+  label: WMI
+  description: |
+    WMI class which can be used to query information or perform actions on the remote computer over a CIM session. The New-CimSession cmdlet can be used to initiate the CIM session

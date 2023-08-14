@@ -1,0 +1,46 @@
+---
+sessions:
+  label: Sessions
+  description: |
+    The LOFLCAB can list and interact with sessions
+
+registry:
+  label: Registry
+  description: |
+    The LOFLCAB can query and write the registry
+
+manage:
+  label: Manage
+  description: The LOFLCAB can manage services on a server
+
+execute:
+  label: Execute
+  description: The LOFLCAB can achieve abitrary code execution
+
+processes:
+  label: Processes
+  description: The LOFLCAB can query and interact with processes
+
+logs:
+  label: Logs
+  description: The LOFLCAB can query logging
+
+data:
+  label: Data
+  description: The LOFLCAB can query or access data
+
+domain:
+  label: Domain
+  description: The LOFLCAB can query or modify the domain
+
+network:
+  label: Network
+  description: The LOFLCAB can query or configure a network
+
+recon:
+  label: Recon
+  description: The LOFLCAB can query information for reconnaissance purposes
+
+misc:
+  label: Misc
+  description: LOFLCAB that does not fit in the other categories

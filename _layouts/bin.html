@@ -1,0 +1,143 @@
+---
+layout: common
+---
+
+{% include page_title.html title=page.Name %}
+
+{{ page.Description | markdownify }}
+
+<script src="{{ '/assets/url_helper.js' | relative_url }}"></script>
+<script async src="{{ '/assets/mitre_attack.js' | relative_url }}"></script>
+<br />
+<table id="bin-tags">
+	<tr>
+		<td>Functions:</td>
+		<td>{% include function_list.html bin=page %}</td>
+	</tr>
+	<tr>
+		<td>Type:</td>
+		<td>{% include bin_type.html bin=page %}</td>
+	</tr>
+	<tr>
+		<td>Toolsets:</td>
+		<td>{% include toolset_list.html bin=page %}</td>
+	</tr>
+</table>
+
+{% if page.Resources and page.Resources.size > 0 %}
+<br />
+<strong>Resources</strong>
+<ul>
+	{% for res in page.Resources %}
+	<li><a href="{{ res }}" target="_blank">{{ res }}</a></li>
+	{% endfor %}
+</ul>
+{% endif %}
+<br />
+
+{% assign functions = page.Commands | group_by:"Function" %}
+{% for function in functions %}
+	{% assign function_name = function.name | downcase %}
+	<h2 id="{{function_name}}" class ="function-name">{{- site.data.functions[function_name].label -}}</h2>
+	{% for item in function.items %}
+		<h3 id="{{ item.Description | downcase | replace: ' ', '-' }}">{{ item.Description | escape }}</h3>
+		<pre><code>{{ item.Command | escape_once }}</code></pre>
+		{% if item.Usecases %}
+			{% if item.Usecases.size > 1 %}
+			<strong>Usecases</strong>
+			<ul>
+			{% for usecase in item.Usecases %}
+				<li>{{ usecase | markdownify | replace: "<p>","" | replace: "</p>","" }}</li>
+			{% endfor %}
+			</ul>
+			{% else %}
+			<strong>Usecase</strong>
+			<br />
+			{{ item.Usecases[0] | markdownify | replace: "<p>","" | replace: "</p>","" }}
+			<br />
+			{% endif %}
+		{% endif %}
+
+		{% if item.Comments %}
+			<br />
+			<strong>Comments</strong>
+			{% if item.Comments.size > 1 %}
+				<ul>
+				{% for comment in item.Comments %}
+				<li>{{ comment | markdownify | replace: "<p>","" | replace: "</p>","" }}</li>
+				{% endfor %}
+				</ul>
+			{% else %}
+				<br />
+				{{ item.Comments[0] | markdownify | replace: "<p>","" | replace: "</p>","" }}
+				<br />
+			{% endif %}
+		{% endif %}
+
+		{% if item.MitreAttack %}
+			<br />
+			<strong>Mitre Att&ck</strong>
+			{% if item.MitreAttack.size > 1 %}
+				<ul>
+				{% for attack in item.MitreAttack %}
+				{% assign type = attack | slice: 0, 2 %}
+				{% if type == "TA" %}
+					<li><a href="https://attack.mitre.org/tactics/{{ attack }}/" target="_blank">{{ attack }}</a></li>
+				{% else %}
+					{% assign techniqueurl = attack | split: "." | join: "/" %}
+					<li><a data-attack-tid="{{ attack }}" href="https://attack.mitre.org/techniques/{{ techniqueurl }}/" target="_blank"><strong>{{ attack }}</strong></a></li>
+				{% endif %}
+				{% endfor %}
+				</ul>
+			{% else %}
+				<br />
+				{% assign attack = item.MitreAttack[0] %}
+				{% assign type = attack | slice: 0, 2 %}
+				{% if type == "TA" %}
+					<a href="https://attack.mitre.org/tactics/{{ attack }}/" target="_blank">{{ attack }}</a>
+				{% else %}
+					{% assign technique = attack | split: "." | join: "/" %}
+					<a data-attack-tid="{{ attack }}" href="https://attack.mitre.org/techniques/{{ technique }}/" target="_blank"><strong>{{ attack }}</strong></a>
+				{% endif %}
+				<br />
+			{% endif %}
+		{% endif %}
+		<br />
+	{% endfor %}
+	<br />
+{% endfor %}
+
+{% if page.Detections and page.Detections.size > 0 %}
+<br />
+<strong>Detection</strong>
+<ul>
+	{% for detection in page.Detections %}{% for entity in detection %}
+	{% if entity[0] != 'IOC' and entity[0] != 'Port' %}
+		{% capture value %}<a href="{{ entity[1] }}" target="_new" data-shorten="true">{{ entity[1] }}</a>{% endcapture %}
+	{% else %}
+		{% assign value = entity[1] | escape %}
+	{% endif %}
+	<li>{{entity[0]}}: {{value}}</li>
+	{% endfor %}{% endfor %}
+</ul>
+{% endif %}
+<br />
+
+<br />
+<div class="lined-box">
+	<div class="updated">Updated: {{page.Updated}}</div>
+	{% if page.Contributors %}
+	{% if page.Contributors.size > 1 %}
+	<div>Contributors:
+	<ul>
+	{% for credit in page.Contributors %}
+		<li>{{credit.Name}}{% if credit.Handle %} (<a href="https://twitter.com/{{credit.Handle}}" target="_blank">{{credit.Handle}}</a>){% endif %}</li>
+	{% endfor %}
+	</ul>
+	{% else %}
+	<div>Contributor:
+	{{page.Contributors[0].Name}}{% if page.Contributors[0].Handle %} (<a href="https://twitter.com/{{page.Contributors[0].Handle}}" target="_blank">{{page.Contributors[0].Handle}}</a>){% endif %}
+	{% endif %}
+	</div>
+	{% endif %}
+</div>

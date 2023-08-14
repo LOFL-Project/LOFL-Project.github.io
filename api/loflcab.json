@@ -1,0 +1,8 @@
+---
+NOTE: Please use the rendered version of this file.
+---
+[{%-for file in site.loflcab-%}
+{%assign keys = "Name,Description,Updated,Toolsets,Commands,Resources,Detections,Contributors" | split:','-%}
+{
+"Type":"{% include get_type_name path=file.path %}",{%-for key in keys%}"{{key}}":{{file[key] | jsonify}},{%endfor%}"Url":"{{file.url | absolute_url}}"}{% unless forloop.last %},{% endunless -%}
+{%-endfor-%}]

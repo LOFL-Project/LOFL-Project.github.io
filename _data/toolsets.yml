@@ -1,0 +1,50 @@
+---
+builtin:
+  label: Builtin
+  description: |
+    Natively built into Windows 10
+
+gui:
+  label: GUI
+  description: |
+    Tool which has a graphical user interface
+
+cimsession:
+  label: CIMSession
+  description: |
+    Tool which uses a CIM session to interact with the remote computer. The New-CimSession cmdlet can be used to initiate the CIM session
+
+pssession:
+  label: PSSession
+  description: |
+    Tool which uses a PowerShell Remoting session to interact with the remote computer. The New-PSSession cmdlet can be used to initiate the PS session
+
+rsat:
+  label: RSAT
+  description: |
+    Tool which is part of the Remote Server Administration Tools (RSAT) which can be installed separately on Windows
+
+server:
+  label: Server
+  description: |
+    Tool which is only available on a Windows Server OS
+
+sysinternals:
+  label: Sysinternals
+  description: |
+    Tool which is part of the Sysinternals suite
+
+# 2krk:
+#   label: 2KRK
+#   description: |
+#     Tool which is part of the Windows 2000 Resource Kit.
+
+# 2k3rk:
+#   label: 2K3RK
+#   description: |
+#     Tool which is part of the Windows Server 2003 Resource Kit
+
+extra:
+  label: Extra
+  description: |
+    Tool which needs to be installed separately

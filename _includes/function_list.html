@@ -1,0 +1,7 @@
+<ul class="function-list">
+	{% assign functions = include.bin.Commands | group_by:"Function" %}
+	{% for cats in functions %}
+	{% assign type = cats.name | downcase %}
+	<li><a href="{{ site.baseurl }}#/{{ type }}" data-title="{{ site.data.functions[type].description | replace: '\n', ' ' }}">{{ site.data.functions[type].label }}</a></li>
+	{% endfor %}
+</ul>

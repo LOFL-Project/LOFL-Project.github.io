@@ -1,0 +1,18 @@
+---
+NOTE: Please use the rendered version of this file.
+---
+{%- capture newline %}
+{% endcapture -%}
+"Name","Type","Function","Toolsets","Synopsis","Description","Commandline","Usecases","Comments","Resources","Detections","MitreAttack","Contributors","Updated"
+{% for cmd in site.loflcab %}
+{%- assign contributors = '' %}{% for contributor in cmd.Contributors %}{% assign contributors = contributors | append:contributor.Name | append:' (@' | append:contributor.Handle | append:')' %}{% unless forloop.last %}{% assign contributors = contributors | append:newline %}{% endunless %}{% endfor -%}
+{%- assign resources = '' %}{% for resource in cmd.Resources %}{% assign resources = resources | append:resource %}{% unless forloop.last %}{% assign resources = resources | append:newline %}{% endunless %}{% endfor %}
+{%- assign detections = '' %}{% for detection in cmd.Detections %}{% for entity in detection %}{% assign d=entity[0] | append:': ' | append:entity[1] %}{% endfor %}{% assign detections = detections | append:d %}{% unless forloop.last %}{% assign detections = detections | append:newline %}{% endunless %}{% endfor -%}
+{%- assign toolsets = '' %}{% for toolset in cmd.Toolsets %}{% assign toolsets = toolsets | append:toolset %}{% unless forloop.last %}{% assign toolsets = toolsets | append:newline %}{% endunless %}{% endfor -%}
+{%- for commandline in cmd.Commands %}
+{%- assign usecases = '' %}{% for usecase in commandline.Usecases %}{% assign usecases = usecases | append:usecase %}{% unless forloop.last %}{% assign usecases = usecases | append:newline %}{% endunless %}{% endfor -%}
+{%- assign comments = '' %}{% for comment in commandline.Comments %}{% assign comments = comments | append:comment %}{% unless forloop.last %}{% assign comments = comments | append:newline %}{% endunless %}{% endfor -%}
+{%- assign techniques = '' %}{% for technique in commandline.MitreAttack %}{% assign techniques = techniques | append:technique %}{% unless forloop.last %}{% assign techniques = techniques | append:newline %}{% endunless %}{% endfor -%}
+"{{ cmd.Name }}","{% include get_type_name path=cmd.path  %}","{{ commandline.Function|replace:'"','""' -}}","{{ toolsets }}","{{ cmd.Description|replace:'"','""' }}","{{ commandline.Description|replace:'"','""' }}","{{ commandline.Command|replace:'"','""'|strip }}","{{ usecases|replace:'"','""' }}","{{ comments|replace:'"','""' }}","{{ resources }}","{{ detections }}","{{ techniques }}","{{ contributors }}","{{ cmd.Updated }}"
+{% endfor -%}
+{% endfor %}

@@ -1,0 +1,11 @@
+<ul class="function-list">
+	{% assign toolsets = include.bin.Toolsets %}
+	{% for toolset in toolsets %}
+	{% if toolset == 'TODO' %}
+	<li style="display:none"><a>{{ toolset }}</a></li>
+	{% else %}
+	{% assign toolset_lower = toolset | downcase %}
+	<li><a href="{{ site.baseurl }}#+{{ toolset_lower }}" data-title="{{ site.data.toolsets[toolset_lower].description | replace: '\n', ' ' }}">{{ toolset }}</a></li>
+	{% endif %}
+	{% endfor %}
+</ul>

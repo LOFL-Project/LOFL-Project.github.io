@@ -1,0 +1,298 @@
+<div id="bin-search-wrapper">
+    <div style="text-align:center">
+        <strong>Types</strong>
+        <ul id="bin-search-filters" class="function-list">
+            {% for type_pair in site.data.types %}
+            {% assign type_id = type_pair[0] %}
+            {% assign type = type_pair[1] %}
+            <li><a href="##{{ type.label | downcase }}" data-title="{{ type.description | replace: '\n', ' ' }}">{{ type.label }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div>&nbsp;</div>
+    <div style="text-align:center">
+        <strong>Functions</strong>
+        <ul id="bin-search-filters" class="function-list">
+            {% for function_pair in site.data.functions %}
+            {% assign function_id = function_pair[0] %}
+            {% assign function = function_pair[1] %}
+            <li><a href="#/{{ function.label | downcase }}" data-title="{{ function.description | replace: '\n', ' ' }}">{{ function.label }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div>&nbsp;</div>
+    <div style="text-align:center">
+        <strong>Toolsets</strong>
+        <ul id="bin-search-filters" class="function-list">
+            {% for toolset_pair in site.data.toolsets %}
+            {% assign toolset_id = toolset_pair[0] %}
+            {% assign toolset = toolset_pair[1] %}
+            <li><a href="#+{{ toolset.label | downcase }}" data-title="{{ toolset.description | replace: '\n', ' ' }}">{{ toolset.label }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div>&nbsp;</div>
+    <input id="bin-search" type="text" placeholder="Search commands by name ('net.exe'), function ('/sessions'), type ('#mmc')"/>
+    <button onclick="document.getElementById('bin-search').value = ''; location.hash=''">Clear</button>
+    <br />
+    <input type="checkbox" id="showhidden" onchange="applyFilter()">
+    <label for="showhidden">Show CABs which appear to have relevant features for LOFL, but are not yet fully tested/documented.</label>
+</div>
+<div id="bin-table-wrapper">
+    <table id="bin-table">
+        <thead>
+            <tr>
+                <th style="width: 40%">Command</th>
+                <th style="width: 24%">Functions</th>
+                <th style="width: 12%">Type</th>
+                <th style="width: 24%">Toolset</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for file in site.loflcab %}
+            <tr>
+                <td><a href="{{ file.url | relative_url }}" class="bin-name" title="{{ file.Description }}">{{ file.Name }}</a></td>
+                <td>{% include function_list.html bin=file %}</td>
+                <td>{% include bin_type.html bin=file %}</td>
+                <td>{% include toolset_list.html bin=file %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr><td id="search-message" colspan="4">No matches…</td></tr>
+        </tfoot>
+    </table>
+</div>
+
+<script>
+    const QueryType = {
+        FUNCTION: '/',
+        TYPE: '#',
+        TOOLSET: '+',
+        OPEN: ''
+    }
+
+    function filter(query, showhidden) {
+        var visibleCount = 0;
+
+        // determine the query type
+        query = query.toLowerCase().trim();
+        var queryType = query[0];
+        if (queryType === QueryType.FUNCTION || queryType === QueryType.TYPE || queryType === QueryType.TOOLSET) {
+            query = query.slice(1);
+        }
+
+        // filter rows
+        var noResults = true;
+        document.querySelectorAll('#bin-table tbody tr').forEach(function (row) {
+            var binName = row.children[0].firstElementChild.innerText.toLowerCase();
+            var binDescription = row.children[0].firstElementChild.attributes['title'].value.toLowerCase();
+            var functions = Array.from(row.children[1].firstElementChild.children)
+                                 .map(function (x) { return x.innerText.toLowerCase() });
+            var type = row.children[2].innerText.toLowerCase();
+            var toolsets = Array.from(row.children[3].firstElementChild.children)
+                                .map(function (x) { return x.innerText.toLowerCase() });
+
+            var show = false;
+
+            // By default, do not show the entries that are not yet filled in
+            if(!showhidden && toolsets.includes('todo'))
+            {
+                show = false;
+            }
+            else
+            {
+                visibleCount += 1;
+
+                // Functions (Manage, Sessions, ...)
+                if (queryType === QueryType.FUNCTION)
+                {
+                    functions.forEach((item) => {
+                        if(item.startsWith(query))
+                        {
+                            show = true;
+                            return;
+                        }
+                    });
+                }
+                // Types (Binaries, Cmdlets, ...)
+                else if (queryType === QueryType.TYPE)
+                {
+                    if (type.indexOf(query) >= 0) {
+                        show = true;
+                    }
+                }
+                // Toolsets (Builtin, RSAT, ..., TODO)
+                else if (queryType === QueryType.TOOLSET)
+                {
+                    toolsets.forEach((item) => {
+                        if(item.startsWith(query))
+                        {
+                            show = true;
+                            return;
+                        }
+                    });
+                }
+                else
+                {
+                    var split = query.split(/\s+/).filter(Boolean);
+
+                    // Search by binary name
+                    if (binName.indexOf(query) >= 0) {
+                        show = true;
+                    }
+                    // Search for keywords in description
+                    else
+                    {
+                        var notfound = false;
+                        for(var i=0; i<split.length; i++)
+                        {
+                            if(binDescription.indexOf(split[i]) == -1)
+                            {
+                                notfound = true;
+                                break;
+                            }
+                        }
+
+                        if(!notfound)
+                            show = true;
+                    }
+                }
+            }
+   
+            if (show)
+            {
+                row.style.display = '';
+                noResults = false;
+
+                // Reset style of command name
+                row.children[0].firstElementChild.className = 'bin-name';
+                
+                // Clear all highlights
+                var functionElems = Array.from(row.children[1].firstElementChild.children);
+                functionElems.forEach((item) => {
+                    if(toolsets.includes('todo'))
+                        item.className = 'todo';
+                    else
+                        item.className = '';
+                });
+                var typeElems = Array.from(row.children[2].firstElementChild.children);
+                typeElems.forEach((item) => {
+                    if(toolsets.includes('todo'))
+                        item.className = 'todo';
+                    else
+                        item.className = '';
+                });
+                var toolsetElems = Array.from(row.children[3].firstElementChild.children);
+                toolsetElems.forEach((item) => {
+                    if(toolsets.includes('todo'))
+                        item.className = 'todo';
+                    else
+                        item.className = '';
+                });
+
+                // Make command lighter in case it is still a TODO
+                if(toolsets.includes('todo'))
+                    row.children[0].firstElementChild.classList.add('bin-name-todo');
+
+                // skip empty filters
+                if (!query) {
+                    return;
+                }
+                
+                // Set highlights based on search query
+                if(queryType === QueryType.FUNCTION)
+                {
+                    // check against the pattern
+                    functionElems.forEach((item) => {
+                        if (item.innerText.toLowerCase().startsWith(query)) {
+                            item.className = 'match';
+                        }
+                    });
+                }
+                else if(queryType === QueryType.TYPE)
+                {
+                    // check against the pattern
+                    typeElems.forEach((item) => {
+                        if (item.innerText.toLowerCase().startsWith(query)) {
+                            item.className = 'match';
+                        }
+                    });
+                }
+                else if(queryType === QueryType.TOOLSET)
+                {
+                    // check against the pattern
+                    toolsetElems.forEach((item) => {
+                        if (item.innerText.toLowerCase().startsWith(query)) {
+                            item.className = 'match';
+                        }
+                    });
+                }
+            }
+            else
+            {
+                row.style.display = 'none';
+            }
+        });
+   
+        // update the search message visibility
+        var searchMessage = document.getElementById('search-message');
+        searchMessage.style.display = noResults ? 'table-cell' : 'none';
+
+        return visibleCount;
+    }
+   
+    function applyFilter() {
+        // filter on load according to the URL
+        var searchBox = document.getElementById('bin-search');
+        var query = decodeURIComponent(location.hash.slice(1));
+        var showhidden = document.getElementById('showhidden').checked;
+        var visibleCount = filter(query, showhidden);
+        if (query) {
+            searchBox.value = query;
+        }
+        else
+        {
+            searchBox.placeholder = 'Search among ' + visibleCount + ' commands by name (\'net.exe\'), function (\'/sessions\'), type (\'#mmc\')';
+        }
+    }
+   
+    function setup() {
+        var searchBox = document.getElementById('bin-search');
+   
+        // ensure height during filtering
+        //var binTableWrapper = document.getElementById('bin-table-wrapper');
+        //binTableWrapper.style.height = binTableWrapper.clientHeight + 'px';
+   
+        // handle user input
+        searchBox.addEventListener('input', function () {
+            var query = searchBox.value;
+            history.replaceState(null, null, encodeURI('#' + query));
+            applyFilter();
+        });
+   
+        // handle shortcuts
+        addEventListener('keydown', function (event) {
+            // focus search box on valid keydown
+            if (event.key.toLowerCase().match(/^[+a-z]$/) &&
+                !(event.ctrlKey || event.altKey || event.metaKey)) {
+                searchBox.focus();
+                searchBox.parentElement.scrollIntoView();
+            }
+            // clear filter on escape
+            else if (event.key === 'Escape') {
+                location.hash = searchBox.value = '';
+                searchBox.focus();
+                searchBox.parentElement.scrollIntoView();
+            }
+        });
+   
+        // handle URL changes
+        window.onhashchange = applyFilter;
+   
+        // trigger filter on page load
+        applyFilter();
+    }
+   
+    setup();
+</script>

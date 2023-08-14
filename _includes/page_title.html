@@ -1,0 +1,6 @@
+<h1>
+    {% if page.url != '/' %}
+    <a href="{{ '/' | relative_url }}">..</a> /
+    {% endif %}
+    {{ include.title }}
+</h1>

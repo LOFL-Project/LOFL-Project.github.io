@@ -1,0 +1,24 @@
+---
+title: LOFLCAB
+baseurl: "/"
+
+exclude: ['/Gemfile', '/Makefile', '/README.md', '/NOTICE.md', 'LICENSE']
+
+permalink: pretty
+
+collections:
+  loflcab:
+    output: true
+
+defaults:
+  - scope:
+      path: '_loflcab'
+    values:
+      layout: 'bin'
+
+markdown: kramdown
+
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
+  math_engine: mathjax
