@@ -1,5 +1,5 @@
 <ul class="function-list">
 	{% capture type_name %}{% include get_type_name path=include.bin.path %}{% endcapture %}
 	{% assign type_name_lower = type_name | downcase %}
-	<li><a href="{{ site.baseurl }}##{{ type_name_lower }}" data-title="{{ site.data.types[type_name_lower].description }}">{{ type_name }}</a></li>
+	<li><a href="/##{{ type_name_lower }}" data-title="{{ site.data.types[type_name_lower].description }}">{{ type_name }}</a></li>
 </ul>

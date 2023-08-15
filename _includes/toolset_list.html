@@ -5,7 +5,7 @@
 	<li style="display:none"><a>{{ toolset }}</a></li>
 	{% else %}
 	{% assign toolset_lower = toolset | downcase %}
-	<li><a href="{{ site.baseurl }}#+{{ toolset_lower }}" data-title="{{ site.data.toolsets[toolset_lower].description | replace: '\n', ' ' }}">{{ toolset }}</a></li>
+	<li><a href="/#+{{ toolset_lower }}" data-title="{{ site.data.toolsets[toolset_lower].description | replace: '\n', ' ' }}">{{ toolset }}</a></li>
 	{% endif %}
 	{% endfor %}
 </ul>
