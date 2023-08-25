@@ -22,4 +22,4 @@ This file contains every LOFLCAB entry in a single file, broken down by LOFLCAB 
 ## YAML
 **Type**: File per entry
 
-Finally, it is possible to access the raw YAML files via GitHub. The file structure can be found on <a href="https://github.com/LOFLCAB/LOFLCAB/tree/master/yml">GitHub</a>.
+Finally, it is possible to access the raw YAML files via GitHub. The file structure can be found on <a href="https://github.com/LOFL-Project/LOFLCAB/tree/main/yml">GitHub</a>.
