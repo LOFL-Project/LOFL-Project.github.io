@@ -1,13 +1,11 @@
 ---
 sessions:
   label: Sessions
-  description: |
-    The LOFLCAB can list and interact with sessions
+  description: The LOFLCAB can list sessions and interact with them
 
 registry:
   label: Registry
-  description: |
-    The LOFLCAB can query and write the registry
+  description: The LOFLCAB can query and write the registry
 
 manage:
   label: Manage
@@ -19,7 +17,7 @@ execute:
 
 processes:
   label: Processes
-  description: The LOFLCAB can query and interact with processes
+  description: The LOFLCAB can query processes and interact with them
 
 logs:
   label: Logs
