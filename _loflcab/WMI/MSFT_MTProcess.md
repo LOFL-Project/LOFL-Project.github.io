@@ -1,0 +1,37 @@
+---
+Name: MSFT_MTProcess
+Description: The process data object
+Updated: 2026-03-25
+Toolsets:
+  - Builtin
+  - CIMSession
+Commands:
+  - Command: Get-CimInstance -Namespace Root\Microsoft\Windows\ManagementTools -ClassName MSFT_MTProcess -CimSession $s
+    Description: List running processes
+    Usecases:
+      - Identify running security software
+    Function: Processes
+    Comments:
+      - 'Create CimSession `$s` using [New-CimSession](../../Cmdlets/New-CimSession/)'
+      - 'Namespace: `Root\Microsoft\Windows\ManagementTools`'
+      - WMI class only exists on Windows Server 2016 or newer
+    MitreAttack:
+  - Command: |
+      $p = Get-CimInstance -Namespace 'root\Microsoft\Windows\ManagementTools' -ClassName 'MSFT_MTProcess' -Filter 'ProcessId=2016' -CimSession $s
+      Invoke-CimMethod -InputObject $p -MethodName 'CreateDump' -CimSession $s
+    Description: Create process memory dump
+    Usecases:
+      - Dump sensitive data from process memory
+    Function: Processes
+    Comments:
+      - 'Create CimSession `$s` using [New-CimSession](../../Cmdlets/New-CimSession/)'
+      - 'Namespace: `Root\Microsoft\Windows\ManagementTools`'
+      - WMI class only exists on Windows Server 2016 or newer
+    MitreAttack:
+Resources:
+  - https://specterops.io/blog/2025/09/18/more-fun-with-wmi/
+Detections:
+Contributors:
+    - Name: Arris Huijgen
+      Handle: bitsadmin
+---
